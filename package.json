@@ -1,15 +1,20 @@
 {
-  "name": "React_Template",
+  "name": "Snake",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "webpack-dev-server -d"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/styles": "^4.10.0",
+    "i": "^0.3.6",
+    "inpm": "^0.1.0",
     "react": "^16.13.1"
   },
   "devDependencies": {
