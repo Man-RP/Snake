@@ -9,14 +9,16 @@ const useBoard = (snake, food) => {
     useEffect(() => {
         const getUpdatedBoard = () => {
             const newBoard = createBoard();
-            //insert food cells
-            if (food)
-                newBoard[food.y][food.x] = 'F';
             //insert snake cells
             if (snake.cells)
                 snake.cells.map(snakeCell => {
                     newBoard[snakeCell.y][snakeCell.x] = 'S';
                 });
+            
+            //insert food cells
+            if (food)
+                newBoard[food.y][food.x] = 'F';
+
             return newBoard;
         }
         setBoard(getUpdatedBoard());

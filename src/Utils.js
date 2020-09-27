@@ -23,8 +23,6 @@ export const getPositionAhead = (pos, dir) => {
     return null;
 }
 
-
-
 export const checkFoodAhead = (snake, food) => {
     //true if snake's head before food
     const nextCell = getPositionAhead(snake.cells[0], snake.direction);
@@ -33,36 +31,18 @@ export const checkFoodAhead = (snake, food) => {
 
 }
 
-
+export const comparePositions = (pos1, pos2) => (JSON.stringify(pos1) == JSON.stringify(pos2)) ? true : false;
 
 export const checkAccident = (snake) => {
     //switch direction
     //  check if next cell is boundary
     //  check if next cell is snake's cell
-
-    switch (snake.direction) {
-        case 'right':
-            if (snake.cells[0].x == (BOARD_SIZE - 1))
-                return true;
-            else if (snake.cells.some(cell => (cell.x == (snake.cells[0].x + 1))&&(cell.y == (snake.cells[0].y - 1))))
-                return true;
-        case 'left':
-            if (snake.cells[0].x == 0)
-                return true;
-            else if (snake.cells.some(cell => (cell.x == (snake.cells[0].x - 1))&&(cell.y == (snake.cells[0].y - 1))))
-                return true;
-        case 'up':
-            if (snake.cells[0].y == 0)
-                return true;
-            else if (snake.cells.some(cell => (cell.y == (snake.cells[0].y - 1))&&(cell.x == (snake.cells[0].x - 1))))
-                return true;
-        case 'down':
-            if (snake.cells[0].y == 0)
-                return true;
-            else if (snake.cells.some(cell => (cell.y == (snake.cells[0].y + 1))&&(cell.x == (snake.cells[0].x + 1))))
-                return true;
-    }
+    
+    const nextCell = getPositionAhead(snake.cells[0], snake.direction);
+    if (!nextCell) return true;
+    if (snake.cells.some(cell =>comparePositions(cell, nextCell))) return true;
     return false;
+
+
+
 }
-
-

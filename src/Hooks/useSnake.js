@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { BOARD_SIZE, getPositionAhead  } from '../Utils'
+import { BOARD_SIZE, getPositionAhead, comparePositions } from '../Utils'
 
 export const useSnake = () => {
     const [snake, setSnake] = useState(
@@ -10,66 +10,29 @@ export const useSnake = () => {
         }
     );
 
-    const advanceSnake = (food) => {
+    const advanceSnake = (feed) => {
         setSnake(old => {
             const newSnake = {...old};
+            //get next cell position
             const nextCell = getPositionAhead(old.cells[0], old.direction);
+            //feed if need to
+            if(feed)    newSnake.eatCells.push(nextCell);
+            //move snake's head to next position
             newSnake.cells.unshift(nextCell);
-            if(!newSnake.eatCells||(!(nextCell.x == food.x)&&(nextCell.y == food.y))){
+            //check if the snake needs to be extended
+            comparePositions(newSnake.cells[newSnake.cells.length - 1], newSnake.eatCells[0]) ?
+                //extend = leave the tail in place
+                newSnake.eatCells.shift() :
+                //don't extend = erase current tail
                 newSnake.cells.pop();
-                newSnake.eatCells.shift();
-            } 
             return newSnake;
         });
     }
 
     const changeSnakeDirection = dir => {
         setSnake(old => {
-            const newSnake = [...old];
-            newSnake.direction = dir;
-            return newSnake;
-        });
-    }
-
-    
-    const expandSnake = () => {
-        setSnake(old => {
-            const newSnake = [...old];
-            newSnake.cells.unshift(getPositionAhead(old.cells[old.cells.length, old.direction]));
-            switch (snake.direction) {
-                case 'right':
-                    newSnake.cells.shift({
-                        x: old.cells[newSnake.cells.length - 1].x - 1,
-                        y: old.cells[newSnake.cells.length - 1].y,
-                    });
-                    break;
-                case 'left':
-                    newSnake.cells.shift({
-                        x: old.cells[newSnake.cells.length - 1].x + 1,
-                        y: old.cells[newSnake.cells.length - 1].y,
-                    });
-                    break;
-                case 'up':
-                    newSnake.cells.shift({
-                        x: old.cells[newSnake.cells.length - 1].x,
-                        y: old.cells[newSnake.cells.length - 1].y + 1,
-                    });
-                    break;
-                case 'down':
-                    newSnake.cells.shift({
-                        x: old.cells[newSnake.cells.length - 1].x,
-                        y: old.cells[newSnake.cells.length - 1].y - 1,
-                    });
-                    break;
-            }
-            return newSnake;
-        });
-    }
-
-    const feedSnake = () => {
-        setSnake(old => {
             const newSnake = {...old};
-            newSnake.eatCells.push(getPositionAhead(old.cells[0], old.direction));
+            newSnake.direction = dir;
             return newSnake;
         });
     }
@@ -81,8 +44,7 @@ export const useSnake = () => {
             eatCells: []
         });
       }, []);
-
-    return [snake, advanceSnake, changeSnakeDirection, feedSnake, expandSnake, resetSnake];
+    return [snake, advanceSnake, changeSnakeDirection, resetSnake];
 }
 
 export default useSnake;
