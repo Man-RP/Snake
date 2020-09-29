@@ -22,7 +22,7 @@ const useBoard = (snake, food) => {
             return newBoard;
         }
         setBoard(getUpdatedBoard());
-    }, [snake.cells[0].x, snake.cells[0].y, food]);
+    }, [snake.cells[0], food]);
     return board;
 }
 

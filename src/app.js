@@ -7,22 +7,26 @@ import Navbar from './components/Navbar';
 
 const useStyles = makeStyles({
     root: {
+        boxSizing: 'border-box',
+        // height: '95vh',
+        // width: '100vw',
         margin: 0,
         padding: 0,
+        
     },
   });
 
 
 function App() {
     const classes = useStyles();
-    console.log('render');
     
     return (
-    <div className={classes.root}>
-        {/* <Navbar />  */}
-        <Snake />
-
-    </div>
+        
+        <div className={classes.root}>
+            {/* <Navbar />  */}
+            <Snake />
+        </div>
+        
     );
 }
 

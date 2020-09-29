@@ -4,7 +4,7 @@ import { BOARD_SIZE, getPositionAhead, comparePositions } from '../Utils'
 export const useSnake = () => {
     const [snake, setSnake] = useState(
         {
-            cells: [{x: 0, y: 0}],
+            cells: [],
             direction: null,
             eatCells: [],
         }
@@ -20,21 +20,22 @@ export const useSnake = () => {
             //move snake's head to next position
             newSnake.cells.unshift(nextCell);
             //check if the snake needs to be extended
-            comparePositions(newSnake.cells[newSnake.cells.length - 1], newSnake.eatCells[0]) ?
+            comparePositions(newSnake.cells[newSnake.cells.length - 1], newSnake.eatCells[0])
                 //extend = leave the tail in place
-                newSnake.eatCells.shift() :
+                ? newSnake.eatCells.shift()
                 //don't extend = erase current tail
-                newSnake.cells.pop();
+                : newSnake.cells.pop();
             return newSnake;
         });
     }
 
     const changeSnakeDirection = dir => {
-        setSnake(old => {
-            const newSnake = {...old};
-            newSnake.direction = dir;
-            return newSnake;
-        });
+        if (dir != snake.direction)
+            setSnake(old => {
+                const newSnake = {...old};
+                newSnake.direction = dir;
+                return newSnake;
+            });
     }
 
     const resetSnake = useCallback(() => {

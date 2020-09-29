@@ -1,4 +1,6 @@
-export const BOARD_SIZE = 10;
+import { debounce } from "@material-ui/core";
+
+export const BOARD_SIZE = 20;
 
 
 export const createBoard = () =>
@@ -46,3 +48,8 @@ export const checkAccident = (snake) => {
 
 
 }
+
+export const premittedDirectionChangeCheck = (currentDirection, testdDirection) =>
+    ((currentDirection == 'right') || (currentDirection == 'left'))
+    ? ((testdDirection == 'up') || (testdDirection == 'down'))
+    : ((testdDirection == 'right') || (testdDirection == 'left'));

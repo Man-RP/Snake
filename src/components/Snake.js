@@ -1,18 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Grid } from '@material-ui/core';
+import React, { useState, useEffect, useCallback } from 'react';
+import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
 import Board from './Board';
-import Popup from './Popup'
-import Score from './score'
+import StatsPanel from './StatsPanel';
+import ButtonsPanel from './ButtonsPanel';
+
 
 import useInterval from '../Hooks/useInterval'
 import useSnake from '../Hooks/useSnake';
 import useBoard from '../Hooks/useBoard';
 import useKeyPress from '../Hooks/useKeyPress';
 
-import { BOARD_SIZE, checkFoodAhead, checkAccident } from '../Utils';
+import theme from './styles/theme';
+
+import { BOARD_SIZE, checkFoodAhead, checkAccident, premittedDirectionChangeCheck } from '../Utils';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        maxWidth: 'min-content',
+        // paddingBottom: '5px',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        border: '3px solid #E09F3E',
+        backgroundColor: '#00283d',
+        borderRadius: '5px',
+    },
+}));
 
 const Snake = () => {
+    const classes = useStyles();
     //States:
     const [score, setScore] = useState(0);
     const [food, setFood] = useState(null);
@@ -24,13 +43,13 @@ const Snake = () => {
     const board = useBoard(snake, food);
 
 
-    const startGame = () => {
+    const startGame = useCallback(() => {
         setScore(0);
         setgameOver(false);
         resetSnake();
-        placeNewFood({ x: BOARD_SIZE/2 + 2, y: BOARD_SIZE/2 });
+        placeNewFood({ x: BOARD_SIZE/2 +3, y: BOARD_SIZE/2 });
         setAdvanceTime(500);
-    }
+    },[]);
 
     const placeNewFood = (pos) => {
         !pos?setFood(
@@ -47,14 +66,14 @@ const Snake = () => {
     }
 
     const advance = () => {
+        // console.log(board)
         if (!checkAccident(snake)) {
-
             const isFoodAhead = checkFoodAhead(snake, food);   
+            advanceSnake(isFoodAhead);
             if (isFoodAhead) {
                 setScore(oldScore => oldScore + 1);
                 placeNewFood();
-            }
-            advanceSnake(isFoodAhead); 
+            }  
         }
         else {
             //gameOver
@@ -63,38 +82,35 @@ const Snake = () => {
         }
     }
     
+    const toggleGame = useCallback(() => {
+        (advanceTime != null) ? setAdvanceTime(null) : setAdvanceTime(500);
+    }, [advanceTime])
+
     useKeyPress(key => {
-        switch (key) {
-            case'D':
-                changeSnakeDirection('right');
-                break;
-            case 'A':
-                changeSnakeDirection('left');
-                break;
-            case 'W':
-                changeSnakeDirection('up');
-                break;
-            case 'S':
-                changeSnakeDirection('down');
-                break;
+        const keyDirections = {
+            'D': 'right',
+            'A': 'left',
+            'W': 'up',
+            'S': 'down'
         }
+        //one of the four keys above AND premitted direction
+        if (keyDirections.hasOwnProperty(key) && premittedDirectionChangeCheck(snake.direction, keyDirections[key])) 
+            changeSnakeDirection(keyDirections[key]); 
     });
 
-    useEffect(() => {
-        startGame();
-    }, []);
+    
 
     useInterval(advance, advanceTime);
-
+    
+    console.log('Snake');
     return (
-        <Grid container justify="center" alignItems="center">
-            <Grid item>panel!</Grid>
-            <Grid item>
-                {!advanceTime && <Popup callback={startGame} gameOver={gameOver} score={score} />}
+        <ThemeProvider theme={theme}>
+            <div className={classes.root}>
                 <Board board={board} />
-            </Grid>
-            <Grid item><Score score={score} /></Grid>
-        </Grid>
+                <StatsPanel score={score} advanceTime={advanceTime} />
+                <ButtonsPanel reset={startGame} toggleGame={toggleGame} />
+            </div>
+        </ThemeProvider>
     )
 }
 
